@@ -1,4 +1,5 @@
 from LinkedListT import *
+from BinTree import *
 
 myList = LinkedListList(1)
 myList.addToFront(2.3)
