@@ -24,7 +24,7 @@ class BinTree:
         self.size += 1
 
     def containsNodeRecursive(self, currentNode, value):
-        if currentNode == None:
+        if currentNode is None:
             return False
         if value == currentNode.getValue():
             return True
@@ -35,3 +35,16 @@ class BinTree:
 
     def containsNode(self, value):
         return self.containsNodeRecursive(self.root, value)
+
+    def deleteNodeRecursive(self, currentNode, value, pointer):
+        if currentNode is None:
+            return None
+        if value == currentNode.getValue:
+            return 0
+            # privous Node?
+            # get greater value of the deleted none if was a right of the dleted node
+            # get less than if the deleted nod was a left of its previous node
+        if value < currentNode.getValue():
+            self.deleteNodeRecursive(currentNode.getLeft(), value, "Left")
+        else:
+            self.deleteNodeRecursive(currentNode.getRight(), value, "Right")

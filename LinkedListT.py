@@ -58,7 +58,7 @@ class LinkedListList:
 
     def getByIndex(self, index):
         wantedNode = self.__head
-        if index < self.size:
+        if self.size > index > 0:
             for i in range(0, index - 1):
                 wantedNode = wantedNode.getNext()
         return wantedNode
