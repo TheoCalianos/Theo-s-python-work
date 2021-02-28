@@ -1,8 +1,17 @@
 import time
 from tkinter import *
+import logging
+import boto3
+from botocore.exceptions import ClientError
 
 import cv2
 from PIL import Image, ImageTk
+
+f = open("C:/Users/Theo/Desktop/rootkey.CSV", "r").read()
+f = f.split("=")
+ACCESS_KEY = f[1]
+SECRET_KEY = f[3]
+
 
 
 class App:
@@ -30,6 +39,7 @@ class App:
             image = "IMG-" + time.strftime("%m-%d-%H-%M") + ".jpg"
             cv2.imwrite(image, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
             msg = Label(self.window, text='image saved ' + image, bg='black', fg='green').place(x=430, y=510)
+            Upload_file(image, "testbucket1235234")
 
     def update(self):
         isTrue, frame = self.vid.getFrame()
@@ -62,6 +72,22 @@ class MyVideoCapture:
     def __del__(self):
         if self.vid.isOpened():
             self.vid.release()
+
+
+def Upload_file(file_name, bucket, object_name=None):
+    global s3
+    if object_name is None:
+        object_name = file_name
+        # Upload the file
+        s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY,
+                    aws_secret_access_key=SECRET_KEY)
+
+    try:
+        response = s3.upload_file(file_name, bucket, object_name)
+    except ClientError as e:
+        logging.error(e)
+        return False
+    return True
 
 
 App()
