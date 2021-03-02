@@ -31,25 +31,13 @@ class App:
         self.btn_snapshot = Button(self.window, text="snapshot", width=30, bg="goldenrod2", activebackground='red',
                                    command=self.snapshot)
         self.btn_gallery = Button(self.window, text="gallery", width=30, bg="goldenrod2", activebackground='red',
-                                   command=self.gallery)
+                                  command=gallery)
 
         self.btn_snapshot.pack(side=tkinter.LEFT, padx=(50, 10))
         self.btn_gallery.pack(side=tkinter.RIGHT, padx=(10, 50))
         self.update()
         self.window.mainloop()
 
-    def gallery(self):
-        newWindow = Toplevel(master)
-        newWindow.title("New Window")
-        newWindow.geometry("200x200")
-        Label(newWindow,
-              text="This is a new window").pack()
-
-        label = Label(master,
-                  text="This is the main window")
-
-        label.pack(pady=10)
-        mainloop()
     def snapshot(self):
         check, frame = self.vid.getFrame()
         if check:
@@ -97,7 +85,7 @@ def Upload_file(file_name, bucket, object_name=None):
         object_name = file_name
         # Upload the file
         s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY,
-                    aws_secret_access_key=SECRET_KEY)
+                          aws_secret_access_key=SECRET_KEY)
 
     try:
         response = s3.upload_file(file_name, bucket, object_name)
@@ -105,6 +93,29 @@ def Upload_file(file_name, bucket, object_name=None):
         logging.error(e)
         return False
     return True
+
+
+def Download_file():
+    get_last_modified = lambda obj: int(obj['LastModified'].strftime('%s'))
+
+    s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY,
+                          aws_secret_access_key=SECRET_KEY)
+    objs = s3.list_objects_v2(Bucket='testbucket1235234')['Contents']
+
+
+def gallery():
+    Download_file()
+    newWindow = Toplevel(master)
+    newWindow.title("New Window")
+    newWindow.geometry("200x200")
+    Label(newWindow,
+        text="This is a new window").pack()
+
+    label = Label(master,
+        text="This is the main window")
+
+    label.pack(pady=10)
+    mainloop()
 
 
 App()
