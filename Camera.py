@@ -1,4 +1,5 @@
 import time
+import tkinter
 from tkinter import *
 import logging
 import boto3
@@ -11,13 +12,13 @@ f = open("C:/Users/Theo/Desktop/rootkey.CSV", "r").read()
 f = f.split("=")
 ACCESS_KEY = f[1]
 SECRET_KEY = f[3]
-
+master = Tk()
 
 
 class App:
     def __init__(self, video_source=0):
         self.appName = "camera"
-        self.window = Tk()
+        self.window = master
         self.window.title("camera")
         self.video_source = video_source
 
@@ -29,10 +30,26 @@ class App:
 
         self.btn_snapshot = Button(self.window, text="snapshot", width=30, bg="goldenrod2", activebackground='red',
                                    command=self.snapshot)
-        self.btn_snapshot.pack()
+        self.btn_gallery = Button(self.window, text="gallery", width=30, bg="goldenrod2", activebackground='red',
+                                   command=self.gallery)
+
+        self.btn_snapshot.pack(side=tkinter.LEFT, padx=(50, 10))
+        self.btn_gallery.pack(side=tkinter.RIGHT, padx=(10, 50))
         self.update()
         self.window.mainloop()
 
+    def gallery(self):
+        newWindow = Toplevel(master)
+        newWindow.title("New Window")
+        newWindow.geometry("200x200")
+        Label(newWindow,
+              text="This is a new window").pack()
+
+        label = Label(master,
+                  text="This is the main window")
+
+        label.pack(pady=10)
+        mainloop()
     def snapshot(self):
         check, frame = self.vid.getFrame()
         if check:
