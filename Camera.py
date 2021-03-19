@@ -88,7 +88,7 @@ def Upload_file(file_name, bucket, object_name=None):
                           aws_secret_access_key=SECRET_KEY)
 
     try:
-        response = s3.upload_file(file_name, bucket, object_name)
+        response = s3.upload_file(file_name, bucket, object_name, )
     except ClientError as e:
         logging.error(e)
         return False
@@ -99,22 +99,35 @@ def Download_file():
     get_last_modified = lambda obj: int(obj['LastModified'].strftime('%s'))
 
     s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY,
-                          aws_secret_access_key=SECRET_KEY)
+                      aws_secret_access_key=SECRET_KEY)
     objs = s3.list_objects_v2(Bucket='testbucket1235234')['Contents']
+    return objs
 
 
 def gallery():
-    Download_file()
+    s3 = boto3.client('s3', aws_access_key_id=ACCESS_KEY,
+                      aws_secret_access_key=SECRET_KEY)
     newWindow = Toplevel(master)
-    newWindow.title("New Window")
-    newWindow.geometry("200x200")
-    Label(newWindow,
-        text="This is a new window").pack()
+    newWindow.title("Gallery ")
+    newWindow.geometry("1000x1000")
+    photos = Download_file()
+    canvas = Canvas(newWindow)
+    scrollbar = Scrollbar(newWindow, orient=VERTICAL, command=canvas.yview)
+    frame = tkinter.Frame(canvas)
+    for photo in photos:
+        fh = s3.get_object(Bucket='testbucket1235234', Key=photo['Key'])['Body']
+        test = ImageTk.PhotoImage(file=fh)
+        label1 = tkinter.Label(frame, image=test)
+        label1.image = test
+        label1.pack(pady=10)
+    canvas.create_window(0, 0, anchor='nw', window=frame)
+    scrollbar.pack(side=RIGHT)
+    canvas.update_idletasks()
+    canvas.configure(scrollregion=canvas.bbox('all'),
+                     yscrollcommand=scrollbar.set)
 
-    label = Label(master,
-        text="This is the main window")
-
-    label.pack(pady=10)
+    canvas.pack(fill='both', expand=True, side='left')
+    scrollbar.pack(fill='y', side='right')
     mainloop()
 
 
